@@ -186,9 +186,9 @@
                             </th>
                         </tr>
                         <tr id="subgroup-row-2">
-                            <td><textarea class="prune" rows="1" cols="7" spellcheck="false"></textarea>&nbsp;&nbsp;</td>
-                            <td><textarea class="search" rows="1" cols="7" spellcheck="false"></textarea>&nbsp;&nbsp;</td>
-                            <td><textarea class="subgroup" rows="1" cols="42" spellcheck="false"></textarea>&nbsp;&nbsp;</td>
+                            <td><textarea class="prune" rows="1" cols="7" spellcheck="false">6</textarea>&nbsp;&nbsp;</td>
+                            <td><textarea class="search" rows="1" cols="7" spellcheck="false">4</textarea>&nbsp;&nbsp;</td>
+                            <td><textarea class="subgroup" rows="1" cols="42" spellcheck="false">r R b B z</textarea>&nbsp;&nbsp;</td>
                             <td>
                                 <button style="font-family:courier new; font-size:17px" class="button remove-subgroup" disabled onclick="subgroupButtonHandler(this)"><strong>-</strong></button>
                             </td>
@@ -202,8 +202,8 @@
                             <th style="vertical-align: bottom">Post-Adjust</th>
                         </tr>
                         <tr id="post-adjust-table">
-                            <td><textarea id="pre-adjustments" rows="1" cols="14" spellcheck="false">U</textarea>&nbsp;&nbsp;</td>
-                            <td><textarea id="post-adjustments" rows="1" cols="14" spellcheck="false">U</textarea>&nbsp;&nbsp;</td>
+                            <td><textarea id="pre-adjustments" rows="1" cols="14" spellcheck="false">z</textarea>&nbsp;&nbsp;</td>
+                            <td><textarea id="post-adjustments" rows="1" cols="14" spellcheck="false">z</textarea>&nbsp;&nbsp;</td>
                         </tr>
                     </table>
 
@@ -239,6 +239,7 @@
                     <option value="STM">STM</option>
                     <option value="SQTM">SQTM</option>
                     <option value="ESQ">ESQ</option>
+                    <option value="MSR">MSR</option>
                 </select>
                 <br>
                 <label for="secondary-metric"> Secondary metric: </label>
@@ -248,6 +249,7 @@
                     <option value="STM">STM</option>
                     <option value="SQTM">SQTM</option>
                     <option value="ESQ">ESQ</option>
+                    <option value="MSR">MSR</option>
                 </select>
                 <br>
                 <input type="checkbox" id="statVis" onclick="visibility('statVis', 'statistics')" checked/><label for="statVis"> Show statistics</label><br>
@@ -390,6 +392,7 @@ _2: 3</textarea>
                 STM: <span id="info-stm"> 0.00 </span><br>
                 SQTM: <span id="info-sqtm"> 0.00 </span><br>
                 ESQ: <span id="info-esq"> 0.00 </span><br>
+                MSR: <span id="info-msr"> 0.00 </span><br>
 
             </div><br>
 
@@ -412,6 +415,8 @@ _2: 3</textarea>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js" integrity="sha512-UnrKxsCMN9hFk7M56t4I4ckB4N/2HHi0w/7+B/1JsXIX3DmyBcsGpT3/BsuZMZf+6mAr0vP81syWtfynHJ69JA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>    
     <script src="../algSpeed.js"></script>
     <script src="../twistysim.js"></script>
+    <script src="../SkewbAlgRater.js"></script>
+    
     <script>
         let work;
         let addBufferInterval;
@@ -432,7 +437,7 @@ _2: 3</textarea>
         let startTime = Date.now();
         let failed = [];
         let isIdle = true;
-        let totalMCC, totalSTM, totalSQTM, totalESQ;
+        let totalMCC, totalSTM, totalSQTM, totalESQ, totalMSR;
         let sortCriteria;
 
         function visibility(checkboxId, elementId) {
@@ -537,10 +542,23 @@ b: (Burc Bulc Bdlc Bdrc) (Ubrc Lubc Dblc Rdbc) (Ublc Ldbc Dbrc Rubc) (UBR-1 UBL+
                     break;
                 case ("Skewb"):
                     pzlField.value = 
-`L: (UFL-1 DFR-1 DBL-1) (DFL+1) (L F D)
-R: (DFR-1 UBR-1 DBL-1) (DBR+1) (R B D)
-B: (UBL-1 DFL-1 DBR-1) (DBL+1) (L D B)
-U: (UBR-1 UFL-1 DBL-1) (UBL+1) (U L B)`;
+`l: (UFL-1 DFR-1 DBL-1) (DLF+1) (L F D)
+L: (URF-1 DLF-1 ULB-1) (UFL+1) (U F L)
+r: (DFR-1 UBR-1 DBL-1) (DRB+1) (R B D)
+R: (URF-1 ULB-1 DRB-1) (UBR+1) (R U B)
+b: (ULB-1 DLF-1 DRB-1) (DBL+1) (L D B)
+B: (UBR-1 UFL-1 DBL-1) (ULB+1) (U L B)
+F: (UFL-1 UBR-1 DFR-1) (URF+1) (F U R) 
+f: (URF-1 DRB-1 DLF-1) (DFR+1) (F R D)
+S: (URF-1) (UFL+1) (ULB+1) (UBR-1) (R U) (F B)
+H: (URF+1) (UFL-1) (ULB-1) (UBR+1) (R U) (F B)
+s: (UBR-1) (ULB+1) (DRB-1) (DBL+1) (U D) (R B)
+h: (UBR+1) (ULB-1) (DRB+1) (DBL-1) (U D) (R B)      
+x: (F U B D) (URF+1 UBR-1 DRB+1 DFR-1) (UFL-1 ULB+1 DBL-1 DLF+1)
+y: (F L B R) (URF UFL ULB UBR) (DFR DLF DBL DRB)
+z: (U R D L) (URF-1 DFR+1 DLF-1 UFL+1) (UBR+1 DRB-1 DBL+1 ULB-1)
+vUperm: (U B D)
+hUperm: (U R D)`;
                     break;
                 case ("Pyraminx"):
                     pzlField.value = 
@@ -784,6 +802,11 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
         function getCombinedBuffer() {
             let combinedBuffer = [];
             for (let i=0; i<solutionsBuffer.length; i++) {
+                let distinctSolutions = [];
+                let cleanAlg = solutionsBuffer[i]
+                if (!distinctSolutions.includes(solutionsBuffer[i])) {
+                    distinctSolutions.push(solutionsBuffer[i]);
+                }
                 combinedBuffer.push([speedBuffer[i], solutionsBuffer[i]]);
             }
             combinedBuffer.sort(compareBufferElements);
@@ -912,6 +935,13 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
             return 1;
         }
 
+        function getMSR(alg) {
+            let CleanAlg = removeParens(alg);
+            let rating = SkewbAlgRater(CleanAlg);
+            console.log(rating);
+            return rating;
+        }
+
         function getMoveCount(alg, metric) {
             let splitAlg = alg.split(" ");
             let count = 0;
@@ -944,11 +974,13 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
             totalMCC += getMCC(topSolution);
             document.getElementById("info-mcc").innerHTML = (totalMCC/numSucceeded).toFixed(2);
             totalSTM += getMoveCount(topSolution, getSTM);
-            document.getElementById("info-stm").innerHTML = (totalSTM/numSucceeded).toFixed(2);
+            document.getElementById("info-stm").innerHTML = (totalSTM/numSucceeded).toFixed(5);
             totalSQTM += getMoveCount(topSolution, getSQTM);
             document.getElementById("info-sqtm").innerHTML = (totalSQTM/numSucceeded).toFixed(2);
             totalESQ += getMoveCount(topSolution, getESQ);
             document.getElementById("info-esq").innerHTML = (totalESQ/numSucceeded).toFixed(2);
+            totalMSR += getMSR(topSolution);
+            document.getElementById("info-msr").innerHTML = (totalMSR/numSucceeded).toFixed(2);
         }
 
         function calc() {
@@ -956,7 +988,7 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
             isIdle = false;
             startTime = Date.now();
             failed = [];
-            totalMCC = totalSTM = totalSQTM = totalESQ = 0;
+            totalMCC = totalSTM = totalSQTM = totalESQ = totalMSR = 0;
             colMask = document.getElementById("faceletColors").value;
 
             document.getElementById("info-this-case").innerHTML = 0;
@@ -966,6 +998,7 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
             document.getElementById("info-stm").innerHTML = "0.00";
             document.getElementById("info-sqtm").innerHTML = "0.00";
             document.getElementById("info-esq").innerHTML = "0.00";
+            document.getElementById("info-msr").innerHTML = "0.00";
             document.getElementById("info-fails").innerHTML = "";
 
             document.getElementById("calc-button").innerHTML = "<strong>&nbsp;End Search&nbsp;</strong>";
@@ -977,6 +1010,7 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
             initNextState();
             addBufferInterval = setInterval(addBufferToTable, 250);
             work.postMessage(getWorkerData());
+        //ratingAlg.push(ratingAlg);
 
             work.onmessage = function(event) {
                 if (event.data.type === "stop") {
@@ -997,6 +1031,11 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
                         speed = getMoveCount(solution, getSQTM);
                     } else if (sortCriteria == "ESQ") {
                         speed = getMoveCount(solution, getESQ);
+                    } else if (sortCriteria == "MSR") {
+                        console.log("got MSR");
+                        speed = getMSR(solution)[0];
+                        solution = getMSR(solution)[1];
+                        console.log("in cal function" + speed);
                     }
                     if (secondaryMetric == "MCC") {
                         solution += " [" + getMCC(solution) + " MCC]";
@@ -1006,6 +1045,8 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
                         solution += " [" + getMoveCount(solution, getSQTM) + " SQTM]";
                     } else if (secondaryMetric == "ESQ") {
                         solution += " [" + getMoveCount(solution, getESQ) + " ESQ]";
+                    } else if (secondaryMetric == "MSR") {
+                        solution += " [" + getMSR(solution) + " MSR]";
                     }
                     speedBuffer.push(speed);
                     solutionsBuffer.push(solution);
