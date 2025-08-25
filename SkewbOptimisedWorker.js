@@ -1,3 +1,5 @@
+//THIS IS MAX'S VERSION, FOR SKEWB ONLY
+
 self.onmessage = function (msg) {
     if (msg.data.puzzle) {main(msg.data)}
 };
@@ -23,6 +25,7 @@ function main(input) {
         let state = fullPuzzle.execute(fullPuzzle.solved, fullPuzzle.moveStrToList(stateStr));
         if (!(arraysEqual(fullPuzzle.solved, state))) {
             if (caseNum >= startNum || modifiers.has(caseNum)) {
+                numSolutions = 0;
                 postMessage({ value: { index: solutionIndex, setup: stateStr, num: caseNum }, type: "next-state" });
                 calcState(state, subPuzzles, input.showPost);
                 solutionIndex++;
@@ -374,7 +377,7 @@ function parseBatch(input) {
 }
 
 function calcState(state, subPuzzles, showPostAdj) {
-    let numSolutions = 0;
+    let numSolutions = 0; //added
     for (let subData of subPuzzles) {
         let searchDepth = parseInt(subData.search, 10);
         if (searchDepth !== searchDepth) {// that means it's NaN
@@ -384,10 +387,14 @@ function calcState(state, subPuzzles, showPostAdj) {
             else {postMessage({value: '"' + subData.search + '" is not a valid search depth.', type: "stop"})}
         }
         for (let solution of subData.puzzle.solve(state, searchDepth, showPostAdj)) {
-            if (numSolutions === 0) {
-                postMessage({value: solution, type: "first solution"});
-            }
-            postMessage({value: solution, type: "solution"});
+            if(numSolutions < 1){
+                if (!solution.includes("z")) {
+                    numSolutions++;
+                    postMessage({value: solution, type: "solution"});
+                } else {
+                     console.log("this scramble has a z")
+                    }
+            } else {return;}
         }
         postMessage({value: 0, type: "set-depth"})
     }

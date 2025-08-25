@@ -440,6 +440,8 @@ _2: 3</textarea>
         let totalMCC, totalSTM, totalSQTM, totalESQ, totalMSR;
         let sortCriteria;
 
+        let optimalMovecount = 0;
+
         function visibility(checkboxId, elementId) {
             if (document.getElementById(checkboxId).checked) {
                 document.getElementById(elementId).hidden = false;
@@ -622,7 +624,7 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
                 ["2B'", "b' B"], ["2B2", "b2 B2"], ["2B", "b B'"]]) {
                     setup = setup.replaceAll(replacer[0], replacer[1]);
                 }
-            }
+            } /*
             if (imgType == "3x3x3-top") {
                 cube = TTk.TwistyPuzzle(3).alg(setup);
                 cube.context().projection().focalFac(-0.905).near(0.83);
@@ -639,7 +641,7 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
             cube = cube.size({width:parseFloat(document.getElementById("imgSize").value,10), height:parseFloat(document.getElementById("imgSize").value,10)})
             if (fc.trim() === "" && imgType == "Megaminx") {cube = cube.fc("wwwwwwwwwwwaaaaaaaaaaarrrrrrrrrrrbbbbbbbbbbbyyyyyyyyyyymmmmmmmmmmmgggggggggggpppppppppppGGGGGGGGGGGoooooooooooBBBBBBBBBBBYYYYYYYYYYY")}
             else if (fc.trim() !== "") {cube = cube.fc(fc)}
-            return cube;
+            return cube; */
         }
 
         function generateImagePreview() {
@@ -648,7 +650,7 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
             const SNAP = 25;
             let dispYaw = (rawYaw > SNAP) ? (rawYaw-SNAP) : (rawYaw < -SNAP) ? (rawYaw+SNAP) : 0;
             let cube = cubeImage(document.getElementById("faceletColors").value, "", dispYaw);
-            cube("#imgPreview");
+            //cube("#imgPreview");
         }
 
         generateImagePreview();
@@ -938,7 +940,6 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
         function getMSR(alg) {
             let CleanAlg = removeParens(alg);
             let rating = SkewbAlgRater(CleanAlg);
-            console.log(rating);
             return rating;
         }
 
@@ -1020,8 +1021,14 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
                 } else if (event.data.type === "depthUpdate") {
                     depth++;
                     document.getElementById("progUpdate"+solveID).innerHTML = "<small>Searching depth "+depth+"</small>";
+                } else if (event.data.type === "first solution") {
+                    let solution = event.data.value;
+                    optimalMovecount = getMoveCount(solution, getSTM);
                 } else if (event.data.type === "solution") {
                     let solution = event.data.value;
+                    if (getMoveCount(solution, getSTM) > optimalMovecount + 2) {
+                        numSolutions++;
+                    } else {
                     let speed = 0;
                     if (sortCriteria == "MCC") {
                         speed = getMCC(solution);
@@ -1032,10 +1039,7 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
                     } else if (sortCriteria == "ESQ") {
                         speed = getMoveCount(solution, getESQ);
                     } else if (sortCriteria == "MSR") {
-                        console.log("got MSR");
-                        speed = getMSR(solution)[0];
-                        solution = getMSR(solution)[1];
-                        console.log("in cal function" + speed);
+                        speed = getMSR(solution);
                     }
                     if (secondaryMetric == "MCC") {
                         solution += " [" + getMCC(solution) + " MCC]";
@@ -1051,10 +1055,12 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
                     speedBuffer.push(speed);
                     solutionsBuffer.push(solution);
                     numSolutions++;
+                }
                 } else if (event.data.type === "set-depth") {
                     depth = event.data.value;
                 } else if (event.data.type === "next-state") {
                     if (event.data.value.index > 1) {
+                        optimalMovecount = 0;
                         addBufferToTable();
                         updateStats();
                         initNextState();
