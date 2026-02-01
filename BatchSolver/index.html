@@ -466,6 +466,7 @@ _2: 3</textarea>
         let isIdle = true;
         let totalMCC, totalSTM, totalSQTM, totalESQ;
         let sortCriteria;
+        let matchesFilter = false;
 
         function visibility(checkboxId, elementId) {
             if (document.getElementById(checkboxId).checked) {
@@ -893,7 +894,10 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
         function initNextState() {
             solveID++;
             numSolutions = 0;
-            createSolutionTable();
+            if (matchesFilter == true) {
+                createSolutionTable();
+                matchesFilter = false;
+            };
         }
 
         function getFirstLine(fieldStr) {
@@ -1030,6 +1034,8 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
                     if (!passesMovecountFilter(solution)) {
                         return; // Skip this solution
                     }
+
+                    matchesFilter = true;
 
                     let speed = 0;
                     if (sortCriteria == "MCC") {
