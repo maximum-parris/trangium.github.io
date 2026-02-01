@@ -835,8 +835,21 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
             let updatedSolutionsData = "";
             let tableNeedle = 0;
             let bufferNeedle = 0;
-            let tableSpeedList = document.getElementById("speed" + solveID).innerHTML.split("<br>").filter(x => (x != ""));
+            //let tableSpeedList = document.getElementById("speed" + solveID).innerHTML.split("<br>").filter(x => (x != ""));
+
+            let speedElement = document.getElementById("speed" + solveID);
+            if (!speedElement) {
+                // No table column exists = no filtered solutions for this case
+                // Just clear buffers and return
+                speedBuffer = [];
+                solutionsBuffer = [];
+                return;
+            }
+
+            let tableSpeedList = speedElement.innerHTML.split("<br>").filter(x => (x != ""));
             let tableSolutionList = document.getElementById("solutions" + solveID).innerHTML.split("<br>").filter(x => (x != ""));
+
+            //let tableSolutionList = document.getElementById("solutions" + solveID).innerHTML.split("<br>").filter(x => (x != ""));
             let maxSolutions = parseInt(document.getElementById("maxSolutions").value, 10);
             let availSolutions = tableSpeedList.length + sortedBuffer.length;
             let solutionsAdded = 0;
@@ -888,6 +901,21 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
 
         function addBufferToTable() { // add buffer to table and update statistics
             if (solutionsBuffer.length === 0) { return }
+
+            if (!document.getElementById("speed" + solveID)) {
+                // No table exists yet, but we have filtered solutions
+                // This means we need to create the table first
+                createSolutionTable();
+                // Set up header if needed
+                if (document.getElementById("imageVis").checked) {
+                    let cube = cubeImage(colMask, currentSetup);
+                    cube("#caseHeader" + solveID);
+                    makeImageCopyable(solveID);
+                } else {
+                    document.getElementById("caseHeader" + solveID).innerHTML = "#" + solveID;
+                }
+            }
+
             mergeBuffer();
         }
 
@@ -1027,7 +1055,7 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
                     if (msg !== null) { alert(msg) } else { updateStats() }
                 } else if (event.data.type === "depthUpdate") {
                     depth++;
-                    document.getElementById("progUpdate" + solveID).innerHTML = "<small>Searching depth " + depth + "</small>";
+                    //document.getElementById("progUpdate" + solveID).innerHTML = "<small>Searching depth " + depth + "</small>";
                 } else if (event.data.type === "solution") {
                     let solution = event.data.value;
 
