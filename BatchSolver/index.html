@@ -1224,11 +1224,11 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
             // Parse the filter (could be a single number or range)
             if (filterValue.includes("-")) {// Handle range like "8-10"
                 let [min, max] = filterValue.split("-").map(x => parseInt(x.trim(), 10));
-                return movecount >= min && movecount <= max;
+                return moveCount >= min && moveCount <= max;
             } else {
                 // Handle single number like "15"
                 let target = parseInt(filterValue, 10);
-                return movecount === target;
+                return moveCount === target;
             }
         }
     </script>
