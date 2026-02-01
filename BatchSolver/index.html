@@ -1255,6 +1255,7 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
         let totalMCC, totalSTM, totalSQTM, totalESQ;
         let sortCriteria;
         let secondaryMetric;
+        let currentSetup = "";
 
         // NEW: Track solutions per case for optimal solution filtering
         let caseSolutions = []; // Store all solutions for current case
@@ -1695,7 +1696,10 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
                     cube("#caseHeader" + solveID);
                     makeImageCopyable(solveID);
                 } else {
-                    document.getElementById("caseHeader" + solveID).innerHTML = "#" + solveID;
+                    let caseHeader = document.getElementById("caseHeader" + solveID);
+                    if (caseHeader) {
+                        caseHeader.innerHTML = "#" + solveID;
+                    }
                 }
             }
 
@@ -1745,7 +1749,13 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
                 }
                 needle--;
             }
-            return -1;
+            return -1; if (document.getElementById("imageVis").checked) {
+                let cube = cubeImage(colMask, event.data.value.setup);
+                cube("#caseHeader" + solveID);
+                makeImageCopyable(solveID)
+            } else {
+                document.getElementById("caseHeader" + solveID).innerHTML = "#" + solveID;
+            }
         }
 
         function getSQTM(move) {
@@ -1884,13 +1894,16 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
                     }
 
                     caseNum = event.data.value.num;
+
+                    currentSetup = event.data.value.setup || "";
+                    /*
                     if (document.getElementById("imageVis").checked) {
                         let cube = cubeImage(colMask, event.data.value.setup);
                         cube("#caseHeader" + solveID);
                         makeImageCopyable(solveID)
                     } else {
                         document.getElementById("caseHeader" + solveID).innerHTML = "#" + solveID;
-                    }
+                    } */
                 } else if (event.data.type === "num-states") {
                     document.getElementById("info-num-cases").innerHTML = event.data.value;
                 } else if (event.data.type === "moveWeights") {
