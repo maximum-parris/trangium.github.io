@@ -468,6 +468,9 @@ _2: 3</textarea>
         let sortCriteria;
         let matchesFilter = false;
 
+
+        let lowestMoveCount = Infinity;
+
         function visibility(checkboxId, elementId) {
             if (document.getElementById(checkboxId).checked) {
                 document.getElementById(elementId).hidden = false;
@@ -922,6 +925,7 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
         function initNextState() {
             solveID++;
             numSolutions = 0;
+            lowestMoveCount = Infinity;
             if (matchesFilter == true) {
                 createSolutionTable();
                 matchesFilter = false;
@@ -1059,7 +1063,11 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
                 } else if (event.data.type === "solution") {
                     let solution = event.data.value;
 
-                    if (!passesMovecountFilter(solution)) {
+                    let tempMoveCount = getMoveCount(solution, getSTM);
+                    if (tempMoveCount < lowestMoveCount) {lowestMoveCount = tempMoveCount};
+
+
+                    if (!passesMovecountFilter(lowestMoveCount)) {
                         return; // Skip this solution
                     }
 
@@ -1209,19 +1217,17 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
 
 
 
-        function passesMovecountFilter(solution) {
+        function passesMovecountFilter(moveCount) {
             let filterValue = document.getElementById("movecountFilter").value.trim();
             if (!filterValue) return true; // No filter = show all
 
             // Parse the filter (could be a single number or range)
             if (filterValue.includes("-")) {// Handle range like "8-10"
                 let [min, max] = filterValue.split("-").map(x => parseInt(x.trim(), 10));
-                let movecount = getMoveCount(solution, getSTM);
                 return movecount >= min && movecount <= max;
             } else {
                 // Handle single number like "15"
                 let target = parseInt(filterValue, 10);
-                let movecount = getMoveCount(solution, getSTM);
                 return movecount === target;
             }
         }
