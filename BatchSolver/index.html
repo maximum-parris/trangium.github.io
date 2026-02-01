@@ -1888,6 +1888,8 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
                             // Case doesn't pass filter - clear buffers
                             speedBuffer = [];
                             solutionsBuffer = [];
+                            let numCases = parseInt(document.getElementById("info-this-case").innerHTML, 10) + 1;
+                            document.getElementById("info-this-case").innerHTML = numCases;
                         }
 
                         initNextState();
