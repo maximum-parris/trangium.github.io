@@ -15,6 +15,7 @@ function SkewbAlgRater(alg, bool) {
         bestAlg = angle[1] + angle[0]; //contains rotation+alg
       }
     });
+    console.log("best alg: " + bestAlg + " rating: " + bestRating);
     return ([bestRating, bestAlg]);
   }
 }

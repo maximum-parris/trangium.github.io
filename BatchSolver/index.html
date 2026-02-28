@@ -944,12 +944,13 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
             let rating;
             let solution;
             let CleanAlg = removeParens(alg);
-            if (checkAllAngles = false) {
+            if (!checkAllAngles) {
                 rating = SkewbAlgRater(CleanAlg, false);
             } else {
                 Arr = SkewbAlgRater(CleanAlg, true)
                 rating = Arr[0];
                 solution = Arr[1];
+                console.log("outputted rating alg: " + solution + " " + rating);
             }
             return [rating, solution];
         }
