@@ -258,6 +258,7 @@
                 <input type="checkbox" id="esqOptVis" onclick="visibility('esqOptVis', 'esqOptions')" /><label for="esqOptVis"> Show ESQ options</label><br>
                 <input type="checkbox" id="showPostAdj" /><label for="showPostAdj"> Show ending adjustments</label><br>
                 Show top <input type="number" class="inputNum" id="maxSolutions" value="20"></input> solutions for each case<br>
+                <input type="checkbox" id="allAngles" onclick="searchAllAngles()"/><label for="statVis"> Search all angles for skewb algs</label><br>
             </div>
 
             <div id="imageOptions">
@@ -441,6 +442,8 @@ _2: 3</textarea>
         let sortCriteria;
 
         let optimalMovecount = 0;
+
+        let checkAllAngles = false;
 
         function visibility(checkboxId, elementId) {
             if (document.getElementById(checkboxId).checked) {
@@ -938,9 +941,26 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
         }
 
         function getMSR(alg) {
+            let rating;
+            let solution;
             let CleanAlg = removeParens(alg);
-            let rating = SkewbAlgRater(CleanAlg);
-            return rating;
+            if (checkAllAngles = false) {
+                rating = SkewbAlgRater(CleanAlg, false);
+            } else {
+                Arr = SkewbAlgRater(CleanAlg, true)
+                rating = Arr[0];
+                solution = Arr[1];
+            }
+            return [rating, solution];
+        }
+
+        function searchAllAngles() {
+            if (!document.getElementById('pre-adjustments').value || !document.getElementById('post-adjustments').value) {  //pre/post adjust messes with this
+                checkAllAngles = true;
+            } else {
+                alert(" remove pre/post adjust!");
+                return;
+            }
         }
 
         function getMoveCount(alg, metric) {
@@ -1039,7 +1059,12 @@ S: (Ul Mr Nd) (Ur Md Nl) (lUr rMd dNl) (mRu nDm uLn)`;
                     } else if (sortCriteria == "ESQ") {
                         speed = getMoveCount(solution, getESQ);
                     } else if (sortCriteria == "MSR") {
-                        speed = getMSR(solution);
+                        MSR_array = getMSR(solution);
+                        speed = MSR_array[0];
+
+                        if(checkAllAngles){
+                            solution = MSR_array[1];
+                        }
                     }
                     if (secondaryMetric == "MCC") {
                         solution += " [" + getMCC(solution) + " MCC]";

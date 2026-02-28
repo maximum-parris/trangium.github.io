@@ -1,7 +1,20 @@
 var positions = ["home", "r", "r'", "R", "R'", "r' R"];
 
-function SkewbAlgRater(alg) {
-  return Number(doAlg(alg).toFixed(2)); // MSR
+function SkewbAlgRater(alg, bool) {
+  if (!bool) {
+    return Number(doAlg(alg).toFixed(2)); // MSR
+  } else {
+    let bestRating = Infinity;
+    let bestAlg = "";
+    findAllRots(alg).forEach(angle => {
+      let rating = doAlg(angle[0]);
+      if (rating < bestRating) {
+        bestRating = rating;
+        bestAlg = angle[1] + angle[0]; //contains rotation+alg
+      }
+    });
+    return([bestRating, bestAlg]);
+  }
 }
 
 function doAlg(algArr) {
@@ -133,3 +146,171 @@ const posWeight = {
     "z": 0.5, "z'": 0.4, "z2": 0.2
   }
 };
+
+
+function findAllRots(alg) {
+  let res = []
+  res.push(alg);
+
+  res += alg + "\n"
+
+  allAngles.forEach(angle => {
+    let newAlg = "";
+    if (!angle.includes(" ")) {
+      newAlg = findAngle(alg, angle);
+    } else {
+      let rots = angle.split(" ");
+      newAlg = findAngle(alg, rots[0]);
+      newAlg = unkael(newAlg);
+      newAlg = findAngle(newAlg, rots[1]);
+    }
+    newAlg = unkael(newAlg);
+    res.push([newAlg, angle])
+  })
+
+  return res;
+}
+
+function findAngle(alg, rot) {
+  const maps = {
+    // Your maps
+    'z': { 'r': 'b', 'R': 'r', 'B': 'R', 'b': 'B' },
+    'z2': { 'r': 'B', 'B': 'r', 'R': 'b', 'b': 'R' },
+    'z3': { 'r': 'R', 'R': 'B', 'B': 'b', 'b': 'r' },
+
+    'x': { 'r': 'f', 'R': 'r', 'B': 'b', 'b': 'l' },
+    'x2': { 'r': 'F', 'R': 'f', 'B': 'l', 'b': 'L' },
+    'x3': { 'r': 'R', 'R': 'F', 'B': 'L', 'b': 'B' },
+
+    'y': { 'r': 'f', 'R': 'F', 'B': 'R', 'b': 'r' },
+    'y3': { 'r': 'b', 'R': 'B', 'B': 'L', 'b': 'l' }
+  };
+
+  const map = maps[rot];
+  if (!map) return alg;
+
+  // Replace r,R,b,B with mapped values, preserving primes
+  return alg.replace(/([rRbB])([']?)/g, (match, letter, prime) => {
+    return (map[letter] || letter) + prime;
+  });
+}
+
+function unkael(s) {
+  // Convert string to array for manipulation
+  let chars = s.split('');
+  let i = 0;
+  let x = chars.length;
+
+  while (i <= x) {
+    if (chars[i] === 'F') {
+      chars[i] = 'b';
+      if (i < x) i++;
+      let y = i;
+
+      if (chars[i] === ' ') {
+        while (y <= x) {
+          if (chars[y] === 'R') chars[y] = 'L';
+          else if (chars[y] === 'r') chars[y] = 'B';
+          else if (chars[y] === 'B') chars[y] = 'l';
+          else if (chars[y] === 'f') chars[y] = 'R';
+          else if (chars[y] === 'L') chars[y] = 'f';
+          else if (chars[y] === 'l') chars[y] = 'r';
+          y++;
+        }
+      } else {
+        while (y <= x) {
+          if (chars[y] === 'R') chars[y] = 'f';
+          else if (chars[y] === 'r') chars[y] = 'l';
+          else if (chars[y] === 'B') chars[y] = 'r';
+          else if (chars[y] === 'f') chars[y] = 'L';
+          else if (chars[y] === 'L') chars[y] = 'R';
+          else if (chars[y] === 'l') chars[y] = 'B';
+          y++;
+        }
+      }
+    }
+    else if (chars[i] === 'f') {
+      chars[i] = 'B';
+      if (i < x) i++;
+      let y = i;
+
+      if (chars[i] === ' ') {
+        while (y <= x) {
+          if (chars[y] === 'R') chars[y] = 'L';
+          else if (chars[y] === 'r') chars[y] = 'F';
+          else if (chars[y] === 'b') chars[y] = 'R';
+          else if (chars[y] === 'F') chars[y] = 'l';
+          else if (chars[y] === 'L') chars[y] = 'b';
+          else if (chars[y] === 'l') chars[y] = 'r';
+          y++;
+        }
+      } else {
+        while (y <= x) {
+          if (chars[y] === 'R') chars[y] = 'b';
+          else if (chars[y] === 'r') chars[y] = 'l';
+          else if (chars[y] === 'b') chars[y] = 'L';
+          else if (chars[y] === 'F') chars[y] = 'r';
+          else if (chars[y] === 'L') chars[y] = 'R';
+          else if (chars[y] === 'l') chars[y] = 'F';
+          y++;
+        }
+      }
+    }
+    else if (chars[i] === 'l') {
+      chars[i] = 'R';
+      if (i < x) i++;
+      let y = i;
+
+      if (chars[i] === ' ') {
+        while (y <= x) {
+          if (chars[y] === 'r') chars[y] = 'F';
+          else if (chars[y] === 'B') chars[y] = 'r';
+          else if (chars[y] === 'b') chars[y] = 'f';
+          else if (chars[y] === 'F') chars[y] = 'B';
+          else if (chars[y] === 'f') chars[y] = 'L';
+          else if (chars[y] === 'L') chars[y] = 'b';
+          y++;
+        }
+      } else {
+        while (y <= x) {
+          if (chars[y] === 'r') chars[y] = 'B';
+          else if (chars[y] === 'B') chars[y] = 'F';
+          else if (chars[y] === 'b') chars[y] = 'L';
+          else if (chars[y] === 'F') chars[y] = 'r';
+          else if (chars[y] === 'f') chars[y] = 'b';
+          else if (chars[y] === 'L') chars[y] = 'f';
+          y++;
+        }
+      }
+    }
+    else if (chars[i] === 'L') {
+      chars[i] = 'r';
+      if (i < x) i++;
+      let y = i;
+
+      if (chars[i] === ' ') {
+        while (y <= x) {
+          if (chars[y] === 'R') chars[y] = 'b';
+          else if (chars[y] === 'B') chars[y] = 'l';
+          else if (chars[y] === 'b') chars[y] = 'f';
+          else if (chars[y] === 'F') chars[y] = 'B';
+          else if (chars[y] === 'f') chars[y] = 'R';
+          else if (chars[y] === 'l') chars[y] = 'F';
+          y++;
+        }
+      } else {
+        while (y <= x) {
+          if (chars[y] === 'R') chars[y] = 'f';
+          else if (chars[y] === 'B') chars[y] = 'F';
+          else if (chars[y] === 'b') chars[y] = 'R';
+          else if (chars[y] === 'F') chars[y] = 'l';
+          else if (chars[y] === 'f') chars[y] = 'b';
+          else if (chars[y] === 'l') chars[y] = 'B';
+          y++;
+        }
+      }
+    }
+    i++;
+  }
+  return chars.join('');
+}
