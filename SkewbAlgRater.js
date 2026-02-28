@@ -7,15 +7,12 @@ function SkewbAlgRater(alg, bool) {
     let bestRating = Infinity;
     let bestAlg = "";
     findAllRots(alg).forEach(angle => {
-      console.log("Testing:", angle[0]);
       let rating = doAlg(angle[0]);
-      console.log("rating: " + rating)
       if (rating < bestRating) {
         bestRating = Number(rating.toFixed(2));
-        bestAlg = angle[1] + angle[0]; //contains rotation+alg
+        bestAlg = angle[1] + " " + fixPrimeRot(angle[0]); //contains rotation+alg
       }
     });
-    console.log("best alg: " + bestAlg + " rating: " + bestRating);
     return ([bestRating, bestAlg]);
   }
 }
@@ -320,4 +317,8 @@ function unkael(s) {
     i++;
   }
   return chars.join('');
+}
+
+function fixPrimeRot (rot) {
+  return rot.replace(/3/g, "'");
 }
