@@ -9,6 +9,7 @@ function SkewbAlgRater(alg, bool) {
     findAllRots(alg).forEach(angle => {
       console.log("Testing:", angle[0]);
       let rating = doAlg(angle[0]);
+      console.log("rating: " + rating)
       if (rating < bestRating) {
         bestRating = Number(rating.toFixed(2));
         bestAlg = angle[1] + angle[0]; //contains rotation+alg
