@@ -156,7 +156,7 @@ var allAngles = ['z', 'z2', 'z3',
 
 function findAllRots(alg) {
   let res = []
-  res.push(alg);
+  res.push([alg, ""]);
 
   allAngles.forEach(angle => {
     let newAlg = "";
@@ -171,7 +171,7 @@ function findAllRots(alg) {
     newAlg = unkael(newAlg);
     res.push([newAlg, angle])
   })
-
+  console.log(res);
   return res;
 }
 
