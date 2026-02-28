@@ -158,8 +158,6 @@ function findAllRots(alg) {
   let res = []
   res.push(alg);
 
-  res += alg + "\n"
-
   allAngles.forEach(angle => {
     let newAlg = "";
     if (!angle.includes(" ")) {
