@@ -13,7 +13,7 @@ function SkewbAlgRater(alg, bool) {
         bestAlg = angle[1] + angle[0]; //contains rotation+alg
       }
     });
-    return([bestRating, bestAlg]);
+    return ([bestRating, bestAlg]);
   }
 }
 
@@ -147,6 +147,12 @@ const posWeight = {
   }
 };
 
+var allAngles = ['z', 'z2', 'z3',
+  'x', 'x z', 'x z2', 'x z3',
+  'x2', 'x2 z', 'x2 z2', 'x2 z3',
+  'x3', 'x3 z', 'x3 z2', 'x3 z3',
+  'y', 'y z', 'y z2', 'y z3', 'y3',
+  'y3 z', 'y3 z2', 'y3 z3']
 
 function findAllRots(alg) {
   let res = []
